@@ -8,21 +8,38 @@ const coinid = ref ('bitcoin')
 const currentCoin = ref('bitcoin')
 const coins = ref(null)
 
-const existemoneda = ref(true)
+const conectado = ref(false)
+const existemoneda = ref(false)
 
 
   // este se ejecuta al momento 
   // y se vuelve a ejecutar cuando coinid.value cambia
   watchEffect(async () => {
   const url = `${API_URL}${coinid.value}`
+  try{
+    conectado.value = true
 
   if ( await (await fetch(url)).ok ) {
        existemoneda.value = true 
        coins.value = await (await fetch(url)).json()
   }
-  else existemoneda.value = false  
-           
+  else existemoneda.value = false
+  
+  }
+  catch (e) {
+    if (e instanceof TypeError) {
+        conectado.value = false;   
+    } else {
+      conectado.value = false;
+       // sentencias para manejar cualquier excepción no especificada
+       logMyErrors(e); // pasa el objeto de la excepción al manejador de errores
+
+}
+  }
+
 })
+           
+
 
       
 
@@ -269,9 +286,9 @@ Se pueden crear enlaces hascia ambos lados usandola directiva v-model .
 
   <div class="container">
     <button @click="cambiaCoin">Moneda :</button>  
-    <input type="text" v-model="currentCoin">
+    <input type="text" v-model="currentCoin"> Sugerencias: bitcoin, ethereum, litecoin, cardano, solana, tether
   </div>
-  <div class="general" v-if="existemoneda">
+  <div class="general" v-if="existemoneda && conectado">
     <img :src='coins.image.small' alt="Cardano IMG">
     <p> Moneda:  <span class="coin"> {{coins.name}}</span></p>
     <p> Símbolo:  <span class="coin"> {{coins.symbol}}</span></p>
@@ -280,8 +297,14 @@ Se pueden crear enlaces hascia ambos lados usandola directiva v-model .
     </span></p>
   </div>
 
-  <div class="general" v-else-if="!existemoneda">
+  <div class="general" v-else-if="!existemoneda && conectado">
     <p> Moneda:   <span class="red"> No encontrada</span></p>
+    <p> Símbolo:  <span class="coin"> - </span></p>
+    <p> Precio ahora:  <span class="coin"> - </span></p> 
+  </div>
+
+   <div class="general" v-else-if="!conectado">
+    <p> Moneda:   <span class="red"> No Tienes conección a Internet</span></p>
     <p> Símbolo:  <span class="coin"> - </span></p>
     <p> Precio ahora:  <span class="coin"> - </span></p> 
   </div>
