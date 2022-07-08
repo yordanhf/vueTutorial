@@ -5,7 +5,7 @@ import todoItem from './components/todoItem.vue'
 
 const API_URL = `https://api.coingecko.com/api/v3/coins/`
 const coinid = ref ('bitcoin')
-const currentCoin = ref('')
+const currentCoin = ref('bitcoin')
 const coins = ref(null)
 
 const existemoneda = ref(true)
