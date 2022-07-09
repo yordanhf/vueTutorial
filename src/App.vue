@@ -6,6 +6,7 @@ import todoItem from './components/todoItem.vue'
 const API_URL = `https://api.coingecko.com/api/v3/coins/`
 const coinid = ref ('bitcoin')
 const currentCoin = ref('bitcoin')
+const currentCoins = ref('Litecoin')
 const coins = ref(null)
 
 const conectado = ref(false)
@@ -67,8 +68,14 @@ const tselected = ref('Básico')
 const multiSelected = ref(['A'])
 
 function cambiaCoin(){
-  coinid.value = currentCoin.value 
+  coinid.value = currentCoin.value.toLowerCase() 
 }
+
+function cambiaCoins(){
+  coinid.value = currentCoins.value.toLowerCase() 
+}
+
+
 
 
 function toggleRed() {
@@ -107,7 +114,7 @@ function notify() {
   </select>
   <hr>
 
-<div id="btutorial" class="doculto" v-if="tselected ==='Básico'">
+<div v-if="tselected ==='Básico'">
 
 <div class="general">
 <!--
@@ -170,10 +177,10 @@ function notify() {
 Tambien podemos mostrar contenido opcional o en un ciclo 
 con las directivas v-if y v-for 
 -->
-  <button @click="show = !show">Esconder Lista</button>
-  <button @click="list.push(list.length + 1)">Insertar número</button>
-  <button @click="list.pop()">Borrar número</button>
-  <button @click="list.reverse()">Invertir Lista</button>
+  <button class="bblock" @click="show = !show">Esconder Lista</button>
+  <button class="bblock" @click="list.push(list.length + 1)">Insertar número</button>
+  <button class="bblock" @click="list.pop()">Borrar número</button>
+  <button class="bblock" @click="list.reverse()">Invertir Lista</button>
 
   <ul v-if="show && list.length">
     <li v-for="item of list" :key="item.value">{{ item }}</li>
@@ -284,17 +291,26 @@ Se pueden crear enlaces hascia ambos lados usandola directiva v-model .
 
   <div v-else-if="tselected ==='Intermedio'">
 
-  <div class="container">
-    <button @click="cambiaCoin">Moneda :</button>  
-    <input type="text" v-model="currentCoin"> Sugerencias: bitcoin, ethereum, litecoin, cardano, solana, tether
+  <div class="general">
+    <form @submit.prevent="cambiaCoin">
+    Moneda:
+    <input type="text" v-model="currentCoin" @submit="cambiaCoin">
+     <button @click.prevent="cambiaCoin">Ok</button>      
+    </form>
   </div>
+<br>
   <div class="general" v-if="existemoneda && conectado">
-    <img :src='coins.image.small' alt="Cardano IMG">
-    <p> Moneda:  <span class="coin"> {{coins.name}}</span></p>
-    <p> Símbolo:  <span class="coin"> {{coins.symbol}}</span></p>
+  <div class="ccenter">
+    <img :src='coins.image.small' >
+    <span class="coin"> {{coins.name}}</span>
+    </div>
+     
+    <p> Símbolo:  <span class="coin"> {{coins.symbol.toUpperCase() }}</span></p>
     <p> Precio ahora:  <span class="coin"> {{coins.market_data.current_price.usd}} USD</span></p>
-    <p> <span class="coin">{{coins.symbol}}</span> es una : <span class="coin">{{coins.categories[0]}}
+    <p> <span class="coin">{{coins.symbol.toUpperCase()}}</span> es una : <span class="coin">{{coins.categories[0]}}
     </span></p>
+    <p><span class="bbold">Descripción: </span>
+    {{coins.description.en}}</p>
   </div>
 
   <div class="general" v-else-if="!existemoneda && conectado">
@@ -307,6 +323,24 @@ Se pueden crear enlaces hascia ambos lados usandola directiva v-model .
     <p> Moneda:   <span class="red"> No Tienes conección a Internet</span></p>
     <p> Símbolo:  <span class="coin"> - </span></p>
     <p> Precio ahora:  <span class="coin"> - </span></p> 
+  </div>  
+  <br>
+ <div class="general"> Sugerencias: 
+  <select v-model="currentCoin" @change="cambiaCoin">
+    <option disabled value="Seleccione uno por favor.">Seleccione uno por favor.</option>
+    <option>Litecoin</option>
+    <option>Cardano</option>
+    <option>Ethereum</option>
+    <option>Tether</option>
+    <option>Solana</option>
+    <option>Monero</option>
+    <option>Dogecoin</option>
+    <option>Polkadot</option>
+    <option>Tron</option>
+    <option>Chainlink</option>   
+    <option>Uniswap</option>
+    <option>Algorand</option> 
+  </select>
   </div>
   
 
@@ -332,9 +366,22 @@ Se pueden crear enlaces hascia ambos lados usandola directiva v-model .
   font-weight: bold;
 }
 
-button, a, input, h1, h2, h3, h4, text  {
+button, a, input text  {
+  display: inline;
+  margin: 3px;
+}
+ .bblock  {
   display: flex;
   margin: 3px;
+  width: 115px;
+}
+
+
+.ccenter{
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .general{
@@ -376,7 +423,7 @@ button, a, input, h1, h2, h3, h4, text  {
 }
 .containerl{
   background-color: rgb(250, 250, 250);
-  display: flex;
+  display: inline;
   flex-direction: row;
   justify-content: left;
   align-items: center;
@@ -387,6 +434,14 @@ button, a, input, h1, h2, h3, h4, text  {
 .red {
   color: red;
 }
+.form{
+  display: inline;
+}
+
+img{
+  margin-right: 5px;
+}
+
 
 
 
